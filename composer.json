@@ -1,0 +1,18 @@
+{
+    "name": "fridde/html",
+    "description": "",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "fridde",
+            "email": "f@hehl.se"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+    },
+    "autoload": {
+        "psr-4": { "Fridde\\": "src/" }
+    },
+    "minimum-stability": "dev"
+}
