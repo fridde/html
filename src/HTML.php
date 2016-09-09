@@ -12,6 +12,7 @@ class HTML extends \DOMDocument
 	const EMPTY_ELEMENTS = ["area","base","br","col","command","embed","hr","img","input","link","meta","param","source"];
 	const STD_CSS = "stylesheet.css";
 	public $includables;
+	public $includables_file_name = "includables.ini";
 
 	function __construct ()
 	{
@@ -30,7 +31,7 @@ class HTML extends \DOMDocument
 		$meta_attributes = array("http-equiv" => "Content-Type", "content" => "text/html; charset=UTF-8");
 		$this->add($this->head, 'meta', "", $meta_attributes);
 		$this->add($this->head, 'title', $this->title);
-		$this->includables = $this->getIncludables();
+		$this->setIncludables();
 		if(is_readable(self::STD_CSS)) {
 			$this->addCss(self::STD_CSS);
 		}
@@ -68,23 +69,17 @@ class HTML extends \DOMDocument
 	*/
 
 
-	public function getIncludables(){
+	public function setIncludables(){
 
-		$file_name = "includables.toml";
-		$toml_class = "Yosymfony\Toml\Toml";
+		$path_of_current_class = pathinfo(\ReflectionClass::getFileName(), PATHINFO_DIRNAME);
+		$file_name = $path_of_current_class . "/../" . $this->includables_file_name;
 		if(is_readable($file_name)){
-			if(class_exists($toml_class)){
-				$parseFunction = $toml_class . "::Parse";
-				$includables = $parseFunction($file_name);
-			}
-			else {
-				throw new \Exception("Tried to parse a toml-configuration file without a parser class defined.");
-			}
+			$this->includables = parse_ini_file($file_name, true);
 		}
 		else {
 			throw new \Exception("File <" . $file_name . "> not readable or doesn't exist.");
 		}
-		return $includables;
+		return $this->includables;
 	}
 	/**
 	* [Summary].
