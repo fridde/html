@@ -72,6 +72,7 @@ class HTML extends \DOMDocument
 	public function setIncludables(){
 
 		$path_of_current_class = pathinfo(__FILE__, PATHINFO_DIRNAME);
+		$file_name = $path_of_current_class . "/../" . $this->includables_file_name;
 		if(is_readable($file_name)){
 			$this->includables = parse_ini_file($file_name, true);
 		}
