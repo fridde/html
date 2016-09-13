@@ -1204,6 +1204,7 @@ class HTML extends \DOMDocument
 		foreach($array as $row){ //cycles through all rows
 			$tr = $this->add($tbody, "tr", "", ["data-id" => $row["id"]]);
 			foreach($header_row as $column => $display_name){ //cycles through all columns
+				$cell = $row[$column] ?? "";
 				$special_column_types = $special_columns[$column] ?? false;
 				if($special_column_types){
 					$data_type = "special_column";
