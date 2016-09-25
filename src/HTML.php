@@ -69,7 +69,8 @@ class HTML extends \DOMDocument
 	*/
 
 
-	public function setIncludables(){
+	public function setIncludables()
+	{
 
 		$path_of_current_class = pathinfo(__FILE__, PATHINFO_DIRNAME);
 		$file_name = $path_of_current_class . "/../" . $this->includables_file_name;
@@ -90,8 +91,8 @@ class HTML extends \DOMDocument
 	*
 	* @return [type] [name] [description]
 	*/
-	public function prepareForExtraction($default_array, $args) {
-
+	public function prepareForExtraction($default_array, $args)
+	{
 		$args_names = array_keys($default_array);
 		/* check if the arguments are given as a single array with keys corresponding to the keys of $default_array, e.g
 		myFunction(["class" => "redClass", "id" => "mainFrame"]) */
