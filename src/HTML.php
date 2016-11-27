@@ -18,7 +18,7 @@ class HTML extends \DOMDocument
 	{
 		parent::__construct();
 		$args = func_get_args();
-		$this->title = (isset($args[0]) ? $args[0] : "");
+		$this->title = $args[0] ?? "";
 		$this->initialize();
 	}
 
@@ -148,12 +148,12 @@ class HTML extends \DOMDocument
 		$return_array = array();
 		foreach($element_array as $key => $element_parts){
 
-			$tag = (isset($element_parts["tag"]) ? $element_parts["tag"] : $element_parts[0]);
-			$content = (isset($element_parts[1]) ? $element_parts[1] : "");
-			$content = (isset($element_parts["content"]) ? $element_parts["content"] : $content);  // a value with a key takes precedence over a value that is in the right order
-			$content = (in_array($tag, self::EMPTY_ELEMENTS) ? "" : $content); // if the tag belongs to the list of void/empty elements, the content is ignored
-			$atts = (isset($element_parts[2]) ? $element_parts[2] : array());
-			$atts = (isset($element_parts["atts"]) ? $element_parts["atts"] : $atts);
+			$tag = $element_parts["tag"] ?? $element_parts[0];
+			$content = $element_parts[1] ?? "";
+			$content = $element_parts["content"] ?? $content;  // a value with a key takes precedence over a value that is in the right order
+			$content = in_array($tag, self::EMPTY_ELEMENTS) ? "" : $content; // if the tag belongs to the list of void/empty elements, the content is ignored
+			$atts = $element_parts[2] ?? [];
+			$atts = $element_parts["atts"] ?? $atts;
 
 			if(!is_numeric($key)){
 				$atts["id"] = $key;
