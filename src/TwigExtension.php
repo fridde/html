@@ -2,7 +2,7 @@
 
 namespace Fridde;
 
-class TwigExpansions
+class TwigExtension
 {
     public $TWIG;
     private $globals;
@@ -38,7 +38,7 @@ class TwigExpansions
     {
         $functions = $this->functions ?? [];
         array_walk($functions, function($function, $name){
-            $this->TWIG->addFunction(new Twig_SimpleFunction($name, $function));
+            $this->TWIG->addFunction(new \Twig_SimpleFunction($name, $function));
         });
     }
 
@@ -46,7 +46,7 @@ class TwigExpansions
     {
         $filters = $this->filters ?? [];
         array_walk($filters, function($filter, $name){
-            $this->TWIG->addFilter(new Twig_SimpleFilter($name, $filter));
+            $this->TWIG->addFilter(new \Twig_SimpleFilter($name, $filter));
         });
 
     }
@@ -55,7 +55,7 @@ class TwigExpansions
     {
         $tests = $this->tests ?? [];
         array_walk($tests, function($test, $name){
-            $this->TWIG->addTest(new Twig_SimpleTest($name, $test));
+            $this->TWIG->addTest(new \Twig_SimpleTest($name, $test));
         });
     }
 
@@ -68,11 +68,17 @@ class TwigExpansions
 
     private function defineAll()
     {
-        $this->add("test", "integer");
+        $this->add("test", "isInteger", "integer");
+        $this->add("filter", "confirmUrl", "confirm_url");
     }
 
-    public function is_integer($var)
+    public function isInteger($var)
     {
         return is_integer($var);
+    }
+
+    public function confirmUrl($visit_id)
+    {
+        return $visit_id;
     }
 }
