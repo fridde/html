@@ -2,6 +2,8 @@
 
 namespace Fridde;
 
+use TwigExpansions;
+
 class HTMLForTwig
 {
 
@@ -31,7 +33,9 @@ class HTMLForTwig
         }
         $loader = new Twig_Loader_Filesystem($template_dir);
         $this->TWIG = new Twig_Environment($loader);
-        $this->TWIG->addGlobal("A", $this);
+        $expander = new TwigExpansions($this->TWIG);
+        $expander->addAll();
+
     }
 
     public function addCss($css = null, $type = "abbreviation")
