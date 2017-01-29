@@ -103,16 +103,19 @@ class HTMLForTwig
         $category = array_filter($this->includables, function($cat) use ($abbreviation){
             return !empty($cat[$abbreviation]);
         });
-        $category = array_values($category);
+
 
 
         if(count($category) > 1){
             throw new \Exception("The abbreviation $abbreviation was not unique. Check the includable file.");
         } elseif(count($category) === 0) {
             throw new \Exception("The abbreviation $abbreviation could not be found. Check the includable file.");
-        } else {
-            return $category[0][$abbreviation];
+        } elseif(array_key_exists("js_local", $category)) {
+            $adress = $GLOBALS["APP_DIR"] . $category["js_local"][$abbreviation];
+        } elseif(array_key_exists("css_local", $category)){
+            $adress = $GLOBALS["APP_DIR"] . $category["css_local"][$abbreviation];
         }
+        return $adress;
     }
 
     private function setIncludablesFromFile($file_name = null)
