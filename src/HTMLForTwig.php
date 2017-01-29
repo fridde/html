@@ -22,10 +22,10 @@ class HTMLForTwig
     function __construct ($template_dir = null)
     {
         if(empty($template_dir)){
-            if(empty($GLOBALS["BASE_DIR"])){
+            if(empty($GLOBALS["BASE_URL"])){
                 throw new \Exception("No template directory given.");
             }
-            $template_dir = $GLOBALS["BASE_DIR"] . "/templates";
+            $template_dir = $GLOBALS["BASE_URL"] . "/templates";
         }
         $loader = new \Twig_Loader_Filesystem($template_dir);
         $this->TWIG = new \Twig_Environment($loader);
@@ -100,22 +100,21 @@ class HTMLForTwig
         if(empty($this->includables)){
             $this->setIncludablesFromFile();
         }
-        $category = array_filter($this->includables, function($cat) use ($abbreviation){
+        $categories = array_filter($this->includables, function($cat) use ($abbreviation){
             return !empty($cat[$abbreviation]);
         });
+        $key = key($categories);
+        $values = array_shift($categories);
 
-
-
-        if(count($category) > 1){
+        if(count($categories) > 0){
             throw new \Exception("The abbreviation $abbreviation was not unique. Check the includable file.");
-        } elseif(count($category) === 0) {
+        } elseif(empty($values)) {
             throw new \Exception("The abbreviation $abbreviation could not be found. Check the includable file.");
-        } elseif(array_key_exists("js_local", $category)) {
-            $adress = $GLOBALS["APP_URL"] . $category["js_local"][$abbreviation];
-        } elseif(array_key_exists("css_local", $category)){
-            $adress = $GLOBALS["APP_URL"] . $category["css_local"][$abbreviation];
+        } elseif(in_array($key, ["js_local", "css_local"])){
+                $value = $GLOBALS["APP_DIR"] . $values[$abbreviation];
+                return $GLOBALS["APP_DIR"] . $values[$abbreviation];
         }
-        return $adress;
+        return $values[$abbreviation];
     }
 
     private function setIncludablesFromFile($file_name = null)
