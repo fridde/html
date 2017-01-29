@@ -22,10 +22,10 @@ class HTMLForTwig
     function __construct ($template_dir = null)
     {
         if(empty($template_dir)){
-            if(empty($GLOBALS["BASE_URL"])){
+            if(empty($GLOBALS["BASE_DIR"])){
                 throw new \Exception("No template directory given.");
             }
-            $template_dir = $GLOBALS["BASE_URL"] . "/templates";
+            $template_dir = $GLOBALS["BASE_DIR"] . "/templates";
         }
         $loader = new \Twig_Loader_Filesystem($template_dir);
         $this->TWIG = new \Twig_Environment($loader);
@@ -111,9 +111,9 @@ class HTMLForTwig
         } elseif(count($category) === 0) {
             throw new \Exception("The abbreviation $abbreviation could not be found. Check the includable file.");
         } elseif(array_key_exists("js_local", $category)) {
-            $adress = $GLOBALS["APP_DIR"] . $category["js_local"][$abbreviation];
+            $adress = $GLOBALS["APP_URL"] . $category["js_local"][$abbreviation];
         } elseif(array_key_exists("css_local", $category)){
-            $adress = $GLOBALS["APP_DIR"] . $category["css_local"][$abbreviation];
+            $adress = $GLOBALS["APP_URL"] . $category["css_local"][$abbreviation];
         }
         return $adress;
     }
