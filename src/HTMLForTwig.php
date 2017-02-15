@@ -3,6 +3,7 @@
 namespace Fridde;
 
 use Fridde\TwigExtension;
+use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles as CssTIS;
 
 class HTMLForTwig
 {
@@ -25,7 +26,7 @@ class HTMLForTwig
             if(empty($GLOBALS["BASE_DIR"])){
                 throw new \Exception("No template directory given.");
             }
-            $template_dir[] = $GLOBALS["BASE_DIR"] . "/templates";            
+            $template_dir[] = $GLOBALS["BASE_DIR"] . "/templates";
         }
         $loader = new \Twig_Loader_Filesystem($template_dir);
         $this->TWIG = new \Twig_Environment($loader);
@@ -95,6 +96,12 @@ class HTMLForTwig
         return $this;
     }
 
+    public function addCssFile($file_name)
+    {
+        $path = $GLOBALS["BASE_DIR"] . "css\\" . $file_name;
+        $this->addCss($path, "adress");
+    }
+
     private function getIncludableAddress($abbreviation)
     {
         if(empty($this->includables)){
@@ -126,10 +133,28 @@ class HTMLForTwig
         }
     }
 
+    public function renderWithInlineCss($echo = false)
+    {
+        $css = "";
+        foreach($this->VAR["CssFiles"] as $path){
+            $css .= file_get_contents($path);
+        }
+        $cssTIS = new CssTIS();
+        $combined_html_css = $cssTIS->convert($this->render(false), $css);
+        if($echo){
+            echo $combined_html_css;
+        }
+        return $combined_html_css;
+    }
+
 
     public function render($echo = true)    {
 
-        echo $this->TWIG->render($this->Template, $this->VAR);
+        $rendered_html = $this->TWIG->render($this->Template, $this->VAR);
+        if($echo){
+            echo $rendered_html;
+        }
+        return $rendered_html;
     }
 
 
