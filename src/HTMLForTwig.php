@@ -25,7 +25,7 @@ class HTMLForTwig
             if(empty($GLOBALS["BASE_DIR"])){
                 throw new \Exception("No template directory given.");
             }
-            $template_dir = $GLOBALS["BASE_DIR"] . "/templates";
+            $template_dir[] = $GLOBALS["BASE_DIR"] . "/templates";            
         }
         $loader = new \Twig_Loader_Filesystem($template_dir);
         $this->TWIG = new \Twig_Environment($loader);
@@ -110,7 +110,7 @@ class HTMLForTwig
             throw new \Exception("The abbreviation $abbreviation was not unique. Check the includable file.");
         } elseif(empty($values)) {
             throw new \Exception("The abbreviation $abbreviation could not be found. Check the includable file.");
-        } 
+        }
         return $values[$abbreviation];
     }
 
@@ -131,17 +131,6 @@ class HTMLForTwig
 
         echo $this->TWIG->render($this->Template, $this->VAR);
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
     public function setTemplate($template)
@@ -200,4 +189,3 @@ class HTMLForTwig
         return $partition;
     }
 }
-

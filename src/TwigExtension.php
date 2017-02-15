@@ -70,6 +70,7 @@ class TwigExtension
     {
         $this->add("test", "isInteger", "integer");
         $this->add("filter", "confirmUrl", "confirm_url");
+        $this->add("filter", "translate", "translate");
     }
 
     public function isInteger($var)
@@ -80,5 +81,19 @@ class TwigExtension
     public function confirmUrl($visit_id)
     {
         return $visit_id;
+    }
+
+    private function getSettings($key = null)
+    {
+        if(empty($key)){
+            return $this->TWIG->SETTINGS ?? null;
+        }
+        return $this->TWIG->SETTINGS[$key] ?? null;
+    }
+
+    public function translate($string)
+    {
+        $translations = $this->getSettings("translations") ?? [];
+        return $settings[strtolower($string)] ?? $string;
     }
 }
