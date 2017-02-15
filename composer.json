@@ -10,8 +10,7 @@
     ],
     "require": {
         "php": ">=7.0.0",
-        "twig/twig": "^2.1",
-        "tijsverkoyen/css-to-inline-styles": "^2.2"
+        "twig/twig": "^2.1"        
     },
     "autoload": {
         "psr-4": { "Fridde\\": "src/" }
