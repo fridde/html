@@ -14,10 +14,9 @@ class HTML extends \DOMDocument
 	public $includables;
 	public $includables_file_name = "includables.ini";
 
-	function __construct ()
+	function __construct(...$args)
 	{
 		parent::__construct();
-		$args = func_get_args();
 		$this->title = $args[0] ?? "";
 		$this->initialize();
 	}
@@ -128,10 +127,10 @@ class HTML extends \DOMDocument
 	* @return [type] [name] [description]
 	*/
 
-	public function create()
+	public function create(...$args)
 	{
 		$def = ["tag" => null, "content" => "", "atts" => array(), "return_as_array" => false];
-		extract($this->prepareForExtraction($def, func_get_args()));
+		extract($this->prepareForExtraction($def, $args));
 		$is_single_element = is_string($tag);
 		if($is_single_element){
 			$element_array = [[$tag, $content, $atts]];
@@ -245,10 +244,10 @@ class HTML extends \DOMDocument
 	*
 	* @return [type] [name] [description]
 	*/
-	public function addFirst()
+	public function addFirst(...$args)
 	{
 		$def = ["node" => null, "tag" => null, "content" => "", "atts" => array()];
-		extract($this->prepareForExtraction($def, func_get_args()));
+		extract($this->prepareForExtraction($def, $args));
 
 		return $this->add($node, $tag, $content, $atts, true);
 	}
@@ -307,11 +306,11 @@ class HTML extends \DOMDocument
 	*
 	* @return [type] [name] [description]
 	*/
-	public function addButton()
+	public function addButton(...$args)
 	{
 		$def = ["node" => null, "content" => "", "type" => "button", "form_id" => "",
 		"formaction" => "", "atts" => array()];
-		extract($this->prepareForExtraction($def, func_get_args()));
+		extract($this->prepareForExtraction($def, $args));
 
 		$atts["type"] = $type;
 		if($form_id != ""){
@@ -346,10 +345,10 @@ class HTML extends \DOMDocument
 	*
 	* @return [type] [name] [description]
 	*/
-	public function addForm()
+	public function addForm(...$args)
 	{
 		$def = ["node" => null, "id" => substr(uniqid(), 0, 5), "action" => "", "content" => "", "method" => "post", "atts" => array()];
-		extract($this->prepareForExtraction($def, func_get_args()));
+		extract($this->prepareForExtraction($def, $args));
 
 		$atts["method"] = $method;
 		$atts["id"] = $id;
