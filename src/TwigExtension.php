@@ -78,11 +78,6 @@ class TwigExtension
         return is_integer($var);
     }
 
-    public function confirmUrl($visit_id)
-    {
-        return $visit_id;
-    }
-
     private function getSettings($key = null)
     {
         if(empty($key)){
