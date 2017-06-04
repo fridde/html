@@ -38,7 +38,11 @@ class Navigation
             function ($item) {
                 $label = $item["label"];
                 $children = $this->getChildItems($item["children"] ?? []);
-                $url = $item['url'] ?? call_user_func([$this, $item["method"]]);
+                if(empty($item['url']) && empty($item['method'])){
+                    $url = '#';
+                } else {
+                    $url = $item['url'] ?? call_user_func([$this, $item["method"]]);
+                }
 
                 return compact('label', 'url', 'children');
             },
@@ -50,7 +54,7 @@ class Navigation
     {
         $items = [];
         if (!empty($children["method"])) {
-            $items = $this->$children["method"];
+            $items = call_user_func([$this, $children["method"]]);
         }
         $extra_items = $children["items"] ?? [];
 

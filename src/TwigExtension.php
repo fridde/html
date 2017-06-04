@@ -69,7 +69,6 @@ class TwigExtension
     private function defineAll()
     {
         $this->add("test", "isInteger", "integer");
-        $this->add("filter", "confirmUrl", "confirm_url");
         $this->add("filter", "translate", "translate");
     }
 
