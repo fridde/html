@@ -196,7 +196,7 @@ class HTML
     private function setIncludablesFromFile(string $file_name = null)
     {
         $file_name = $file_name ?? $this->includables_file_name;
-        $path = dirname(__FILE__, 2).'\\'.$file_name;
+        $path = dirname(__FILE__, 2). DIRECTORY_SEPARATOR .$file_name;
 
         if (is_readable($path)) {
             $this->includables = parse_ini_file($path, true);
