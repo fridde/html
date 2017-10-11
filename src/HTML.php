@@ -99,23 +99,24 @@ class HTML
     }
 
     /**
-     * @param array $js
+     * @param string|array $js
      * @param string $type
      * @return HTML
      */
-    public function addJS($js = [], $type = "abbreviation")
+    public function addJS($js, $type = "abbreviation")
     {
+        $js = (array) $js;
         return $this->addJsOrCss("js", $js, $type);
     }
 
     /**
-     * @param array $css
+     * @param string|array $css
      * @param string $type
      * @return HTML
      */
-    public function addCss($css = [], $type = "abbreviation")
+    public function addCss($css, $type = "abbreviation")
     {
-        $css = $css ?? [];
+        $css = (array) $css;
 
         return $this->addJsOrCss("css", $css, $type);
     }
