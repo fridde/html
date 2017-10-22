@@ -19,8 +19,7 @@ class HTML
     public $Title;
     /* @var array $includables An array to be constructed from an ini-file of includable sources */
     private $includables;
-    /* @var string $includables_file_name The path or filename seen from the root directory of this package to the
-     *                                      includables */
+    /* @var string $includables_file_name The path or filename seen from the root directory of this package to the includables */
     public $includables_file_name = "includables.ini";
 
     /* @var array INCLUDE_TYPES */
