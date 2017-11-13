@@ -5,6 +5,10 @@ namespace Fridde;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles as CssTIS;
 use Hampe\Inky\Inky;
 
+/**
+ * Class HTML
+ * @package Fridde
+ */
 class HTML
 {
     /** @var */
@@ -34,7 +38,7 @@ class HTML
      * @param string|null $template_dir
      * @throws \Exception
      */
-    function __construct(string $template_dir = null)
+    public function __construct(string $template_dir = null, array $extensions = [])
     {
         if (empty($template_dir)) {
             if (!defined('BASE_DIR')) {
@@ -45,9 +49,10 @@ class HTML
         }
         $loader = new \Twig_Loader_Filesystem($template_dir);
         $this->TWIG = new \Twig_Environment($loader, ["debug" => true]);
-        $extension = new TwigExtension($this->TWIG, ["A" => $this]);
-        $this->TWIG = $extension->addAll();
-        $this->TWIG->addExtension(new \Twig_Extension_Debug());
+        $extensions[] = new \Twig_Extension_Debug();
+        foreach($extensions as $extension){
+            $this->TWIG->addExtension($extension);
+        }
     }
 
     /**
@@ -224,24 +229,6 @@ class HTML
     }
 
     /**
-     * @param array|string|null $input
-     * @return $this
-     * @throws \Exception
-     */
-    public function addNav($role = null)
-    {
-
-        $nav = new Navigation();
-        $role = $role ?? $nav->getUserRole();
-        $nav_items = $nav->getMenuForRole($role);
-
-        $this->addVariable("nav_items", $nav_items);
-
-        return $this;
-
-    }
-
-    /**
      * @return $this
      */
     public function inkify()
@@ -372,4 +359,19 @@ class HTML
 
         return $partition;
     }
+
+    /*
+    // TODO: Remove this function
+
+
+    public function addNav($role = null)
+    {
+        $nav = new Navigation();
+        $role = $role ?? $nav->getUserRole();
+        $nav_items = $nav->getMenuForRole($role);
+        $this->addVariable("nav_items", $nav_items);
+        return $this;
+    }
+
+    */
 }
