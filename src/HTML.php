@@ -257,10 +257,13 @@ class HTML
      * @param bool $echo If set to true, echos the document, too
      * @return string The final html document after all compilations
      */
-    public function render(bool $echo = true)
+    public function render(bool $echo = true, $encode_entities = false)
     {
         if (empty($this->DOC)) {
             $this->finalCompilation();
+        }
+        if($encode_entities){
+            $this->DOC = htmlentities($this->DOC, ENT_COMPAT|ENT_XHTML);
         }
         if ($echo) {
             echo $this->DOC;
@@ -301,7 +304,7 @@ class HTML
      */
     public function setTitle($title = null)
     {
-        $this->Title = $title ?? (SETTINGS["defaults"]["title"] ?? "");
+        $this->Title = $title ?? '';
 
         return $this;
     }
@@ -360,18 +363,4 @@ class HTML
         return $partition;
     }
 
-    /*
-    // TODO: Remove this function
-
-
-    public function addNav($role = null)
-    {
-        $nav = new Navigation();
-        $role = $role ?? $nav->getUserRole();
-        $nav_items = $nav->getMenuForRole($role);
-        $this->addVariable("nav_items", $nav_items);
-        return $this;
-    }
-
-    */
 }

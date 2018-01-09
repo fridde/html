@@ -72,7 +72,7 @@ class TwigBaseExtension extends \Twig_Extension
         foreach ($names as $name_and_callback) {
             $name_and_callback = (array) $name_and_callback;
             $name = $name_and_callback[0];
-            $callback = $name_and_callback[0] ?? $name;
+            $callback = $name_and_callback[1] ?? $name;
             $return[$name] = [$this, $callback];
         }
         return $return;
