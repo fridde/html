@@ -26,12 +26,10 @@ class HTML
     /* @var string $includables_file_name The path or filename seen from the root directory of this package to the includables */
     public $includables_file_name = "includables.ini";
 
-    /* @var array INCLUDE_TYPES */
-    const INCLUDE_TYPES = [
-        "abbreviation" => 0,
-        "adress" => 1,
-        "literal" => 2,
-    ];
+    public const INC_ABBREVIATION = 0;
+    public const INC_ADDRESS = 1;
+    public const INC_LITERAL = 2;
+
 
     /**
      * HTML constructor.
@@ -50,7 +48,7 @@ class HTML
         $loader = new \Twig_Loader_Filesystem($template_dir);
         $this->TWIG = new \Twig_Environment($loader, ["debug" => true]);
         $extensions[] = new \Twig_Extension_Debug();
-        foreach($extensions as $extension){
+        foreach ($extensions as $extension) {
             $this->TWIG->addExtension($extension);
         }
     }
@@ -86,6 +84,18 @@ class HTML
         return $this->addDefaultJsOrCss("css", $abbreviation);
     }
 
+    public function addDefaultFonts()
+    {
+        $array = SETTINGS['defaults']['fonts'];
+        array_walk(
+            $array,
+            function (&$v, $k) {
+                array_unshift($v, $k);
+            }
+        );
+        return $this->addGoogleFonts($array);
+    }
+
     /**
      * @param $type
      * @param $key
@@ -99,17 +109,18 @@ class HTML
             throw new \Exception("The abbreviation <".$key."> could not be resolved");
         }
 
-        return $this->addJsOrCss($type, $array, "abbreviation");
+        return $this->addJsOrCss($type, $array, self::INC_ABBREVIATION);
     }
 
     /**
      * @param string|array $js
-     * @param string $type
+     * @param int $type
      * @return HTML
      */
-    public function addJS($js, $type = "abbreviation")
+    public function addJS($js, int $type = self::INC_ABBREVIATION)
     {
         $js = (array) $js;
+
         return $this->addJsOrCss("js", $js, $type);
     }
 
@@ -118,9 +129,9 @@ class HTML
      * @param string $type
      * @return HTML
      */
-    public function addCss($css, $type = "abbreviation")
+    public function addCss($css, int $type = self::INC_ABBREVIATION)
     {
-        $css = (array) $css;
+        $css = (array)$css;
 
         return $this->addJsOrCss("css", $css, $type);
     }
@@ -128,30 +139,27 @@ class HTML
     /**
      * @param string $cssOrJs Either "css" or "js"
      * @param array $array
-     * @param string|int $type
+     * @param int $type
      * @return $this
      */
-    private function addJsOrCss(string $cssOrJs, array $array, $type)
+    private function addJsOrCss(string $cssOrJs, array $array, int $type)
     {
 
-        if (!is_integer($type)) {
-            $type = self::INCLUDE_TYPES[$type];
-        }
+        $type_translator = [
+            self::INC_ADDRESS => ['css' => 'CssFiles', 'js' => 'JsFiles'],
+            self::INC_LITERAL => ['css' => 'LiteralCss', 'js' => 'LiteralJs']
+        ];
+
         $array = (array)$array;
 
         foreach ($array as $element) {
-            if ($type == 0) { //abbreviation
+            $type_index = $type;
+            if ($type === self::INC_ABBREVIATION) { //abbreviation
                 $element = $this->getIncludableAddress($element);
+                $type_index = self::INC_ADDRESS;
             }
-            if ($type <= 1 && $cssOrJs == "css") {
-                $this->VAR["CssFiles"][] = $element;
-            } elseif ($type <= 1 && $cssOrJs == "js") {
-                $this->VAR["JsFiles"][] = $element;
-            } elseif ($type == 2 && $cssOrJs == "css") {
-                $this->VAR["LiteralCss"][] = $element;
-            } elseif ($type == 2 && $cssOrJs == "js") {
-                $this->VAR["LiteralJs"][] = $element;
-            }
+
+            $this->VAR[$type_translator[$type_index][$cssOrJs]][] = $element;
         }
 
         return $this;
@@ -163,7 +171,7 @@ class HTML
     public function addCssFile(string $file_name)
     {
         $path = BASE_DIR."css\\".$file_name;
-        $this->addCss($path, "adress");
+        $this->addCss($path, self::INC_ADDRESS);
     }
 
     /**
@@ -201,7 +209,7 @@ class HTML
     private function setIncludablesFromFile(string $file_name = null)
     {
         $file_name = $file_name ?? $this->includables_file_name;
-        $path = dirname(__FILE__, 2). DIRECTORY_SEPARATOR .$file_name;
+        $path = dirname(__FILE__, 2).DIRECTORY_SEPARATOR.$file_name;
 
         if (is_readable($path)) {
             $this->includables = parse_ini_file($path, true);
@@ -209,6 +217,26 @@ class HTML
             throw new \Exception("No file for includables found.");
         }
     }
+
+
+    public function addGoogleFonts(array $fonts)
+    {
+        $base_path = 'https://fonts.googleapis.com/css?family=';
+
+        array_walk_recursive($fonts, 'trim');
+        $font_path_array = [];
+        foreach ($fonts as $font_and_styles) {
+            $font_string = str_replace([' ', '_'], '+', array_shift($font_and_styles));
+            $styles = $font_and_styles;
+            if (!empty($font_and_styles)) {
+                $font_string .= ':'.implode(',', $font_and_styles);
+            }
+            $font_path_array[] = $font_string;
+        }
+        $complete_path = $base_path.implode('|', $font_path_array);
+        return $this->addCss($complete_path, self::INC_ADDRESS);
+    }
+
 
     /**
      * @return $this
@@ -228,19 +256,6 @@ class HTML
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function inkify()
-    {
-        if (empty($this->DOC)) {
-            $this->finalCompilation();
-        }
-        $inky = new Inky();
-        $this->DOC = $inky->releaseTheKraken($this->DOC);
-
-        return $this;
-    }
 
     /**
      * @return $this
@@ -262,8 +277,8 @@ class HTML
         if (empty($this->DOC)) {
             $this->finalCompilation();
         }
-        if($encode_entities){
-            $this->DOC = htmlentities($this->DOC, ENT_COMPAT|ENT_XHTML);
+        if ($encode_entities) {
+            $this->DOC = htmlentities($this->DOC, ENT_COMPAT | ENT_XHTML);
         }
         if ($echo) {
             echo $this->DOC;
