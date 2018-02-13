@@ -21,10 +21,8 @@ class HTML
     private $Template;
     /* @var string $Title The title of the html-doc to be shown in the browser */
     public $Title;
-    /* @var array $includables An array to be constructed from an ini-file of includable sources */
-    private $includables;
-    /* @var string $includables_file_name The path or filename seen from the root directory of this package to the includables */
-    public $includables_file_name = "includables.ini";
+    /* @var IncludableReader $IncludableReader  */
+    private $IncludableReader;
 
     public const INC_ABBREVIATION = 0;
     public const INC_ADDRESS = 1;
@@ -102,14 +100,20 @@ class HTML
      * @return HTML
      * @throws \Exception
      */
-    private function addDefaultJsOrCss($type, $key)
+    private function addDefaultJsOrCss($file_type, $key)
     {
-        $array = SETTINGS["defaults"][$type][$key] ?? false;
+        $array = SETTINGS['defaults'][$file_type][$key] ?? false;
         if ($array === false) {
-            throw new \Exception("The abbreviation <".$key."> could not be resolved");
+            throw new \Exception('The abbreviation <'.$key.'> could not be resolved');
         }
+        $remote_abbreviations = $array['remote'] ?? [];
+        $this->addJsOrCss($file_type, $remote_abbreviations, self::INC_ABBREVIATION);
 
-        return $this->addJsOrCss($type, $array, self::INC_ABBREVIATION);
+        $local_file_names = $array['local'] ?? [];
+        array_walk($local_file_names, function(&$v) use ($file_type){
+            $v = $file_type . '/' . $v . '.' . $file_type;
+        });
+        return $this->addJsOrCss($file_type, $local_file_names, self::INC_ADDRESS);
     }
 
     /**
@@ -154,8 +158,9 @@ class HTML
 
         foreach ($array as $element) {
             $type_index = $type;
-            if ($type === self::INC_ABBREVIATION) { //abbreviation
-                $element = $this->getIncludableAddress($element);
+            if ($type === self::INC_ABBREVIATION) {
+                $this->IncludableReader = $this->IncludableReader ?? new IncludableReader();
+                $element = $this->IncludableReader->getPathFor($element, $cssOrJs);
                 $type_index = self::INC_ADDRESS;
             }
 
@@ -170,52 +175,8 @@ class HTML
      */
     public function addCssFile(string $file_name)
     {
-        $path = BASE_DIR."css\\".$file_name;
+        $path = BASE_DIR."css\\".$file_name . '.css';
         $this->addCss($path, self::INC_ADDRESS);
-    }
-
-    /**
-     * @param $abbreviation
-     * @return mixed
-     * @throws \Exception
-     */
-    private function getIncludableAddress(string $abbreviation)
-    {
-        if (empty($this->includables)) {
-            $this->setIncludablesFromFile();
-        }
-        $categories = array_filter(
-            $this->includables,
-            function ($cat) use ($abbreviation) {
-                return !empty($cat[$abbreviation]);
-            }
-        );
-        $key = key($categories);
-        $values = array_shift($categories);
-
-        if (count($categories) > 0) {
-            throw new \Exception("The abbreviation $abbreviation was not unique. Check the includable file.");
-        } elseif (empty($values)) {
-            throw new \Exception("The abbreviation $abbreviation could not be found. Check the includable file.");
-        }
-
-        return $values[$abbreviation];
-    }
-
-    /**
-     * @param string|null $file_name
-     * @throws \Exception
-     */
-    private function setIncludablesFromFile(string $file_name = null)
-    {
-        $file_name = $file_name ?? $this->includables_file_name;
-        $path = dirname(__FILE__, 2).DIRECTORY_SEPARATOR.$file_name;
-
-        if (is_readable($path)) {
-            $this->includables = parse_ini_file($path, true);
-        } else {
-            throw new \Exception("No file for includables found.");
-        }
     }
 
 

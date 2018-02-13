@@ -1,0 +1,47 @@
+# remote javascript files hosted by other servers
+base_paths:
+    cf: '//cdnjs.cloudflare.com/ajax/libs/'
+
+js:
+    remote:
+        jquery: [cf, 'jquery/3.2.1/jquery.min']
+        jquery.debug: [cf, 'jquery/3.1.1/jquery']
+        DT: '//cdn.datatables.net/v/bs4/dt-1.10.16/b-1.5.1/b-colvis-1.5.1/cr-1.4.1/fh-3.1.3/r-2.2.1/rr-1.2.3/datatables.min'
+        jqueryUI: [cf, 'jqueryui/1.12.1/jquery-ui.min']
+        jqueryUI.debug: [cf, 'jqueryui/1.12.1/jquery-ui']
+        tether: [cf, 'tether/1.4.0/js/tether.min']
+        tt: '//unpkg.com/tooltip.js'
+        popper: '//unpkg.com/popper.js'
+        bs: [cf, 'twitter-bootstrap/4.0.0/js/bootstrap.min']
+        bs.debug: [cf, 'twitter-bootstrap/4.0.0-alpha.6/js/bootstrap']
+        bs.date: [cf, 'bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min']
+        bs.date.sv: [cf, 'bootstrap-datepicker/1.7.1/locales/bootstrap-datepicker.sv.min']
+        bs.time: [cf, 'bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.min']
+        bs.select: [cf, 'bootstrap-select/1.12.2/js/bootstrap-select.min']
+        moment: [cf, 'moment.js/2.17.1/moment.min']
+        moment_sv: [cf, 'moment.js/2.17.1/locale/sv']
+        confirm: [cf, 'jquery-confirm/3.1.0/jquery-confirm.min']
+        toastr: [cf, 'toastr.js/latest/toastr.min']
+        cookie_api: [cf, 'js-cookie/2.1.4/js.cookie.min']
+        fa: '//use.fontawesome.com/releases/v5.0.6/js/all'
+
+# local already existing javascript files
+    local:
+        DT.config: 'js/Datatables_config.js'
+
+# remote css files
+css:
+    remote:
+        jqueryUI: [cf, 'jqueryui/1.12.1/jquery-ui.min']
+        DT: '//cdn.datatables.net/v/bs4/dt-1.10.16/b-1.5.1/b-colvis-1.5.1/cr-1.4.1/fh-3.1.3/r-2.2.1/rr-1.2.3/datatables.min'
+        bs: [cf, 'twitter-bootstrap/4.0.0/css/bootstrap.min']
+        bs.flatly: '//bootswatch.com/flatly/bootstrap.min'
+        fAwe: [cf, 'font-awesome/4.7.0/css/font-awesome.min']
+        bs.date: [cf, 'bootstrap-datepicker/1.7.1/css/bootstrap-datepicker3.min']
+        bs.time: [cf, 'bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.min']
+        bs.select: [cf, 'bootstrap-select/1.12.2/css/bootstrap-select.min']
+        confirm: [cf, 'jquery-confirm/3.1.0/jquery-confirm.min']
+        toastr: [cf, 'toastr.js/latest/toastr.min']
+
+# local already existing css-files
+    local:
