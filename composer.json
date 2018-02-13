@@ -11,7 +11,7 @@
     "require": {
         "php": ">=7.0.0",
         "twig/twig": "2.1.0",
-        "symfony/yaml": "3.3.0"
+        "symfony/yaml": "4.0.4"
     },
     "autoload": {
         "psr-4": { "Fridde\\": "src/" }
