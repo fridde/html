@@ -121,11 +121,10 @@ class HTML
      * @param int $type
      * @return HTML
      */
-    public function addJS($js, int $type = self::INC_ABBREVIATION)
+    public function addJS($js_array)
     {
-        $js = (array) $js;
 
-        return $this->addJsOrCss("js", $js, $type);
+        return $this->addJsOrCss("js", $js_array, $type);
     }
 
     /**
@@ -133,11 +132,9 @@ class HTML
      * @param string $type
      * @return HTML
      */
-    public function addCss($css, int $type = self::INC_ABBREVIATION)
+    public function addCss($css_array)
     {
-        $css = (array)$css;
-
-        return $this->addJsOrCss("css", $css, $type);
+        return $this->addJsOrCss("css", $css_array, $type);
     }
 
     /**
@@ -146,7 +143,7 @@ class HTML
      * @param int $type
      * @return $this
      */
-    private function addJsOrCss(string $cssOrJs, array $array, int $type)
+    private function addJsOrCss(string $cssOrJs, array $array)
     {
 
         $type_translator = [
@@ -154,17 +151,16 @@ class HTML
             self::INC_LITERAL => ['css' => 'LiteralCss', 'js' => 'LiteralJs']
         ];
 
-        $array = (array)$array;
-
         foreach ($array as $element) {
-            $type_index = $type;
+            $element = (array) $element;
+            $type = $element[1] ?? self::INC_ABBREVIATION;
             if ($type === self::INC_ABBREVIATION) {
                 $this->IncludableReader = $this->IncludableReader ?? new IncludableReader();
                 $element = $this->IncludableReader->getPathFor($element, $cssOrJs);
-                $type_index = self::INC_ADDRESS;
+                $type = self::INC_ADDRESS;
             }
 
-            $this->VAR[$type_translator[$type_index][$cssOrJs]][] = $element;
+            $this->VAR[$type_translator[$type][$cssOrJs]][] = $element;
         }
 
         return $this;

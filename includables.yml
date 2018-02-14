@@ -1,9 +1,9 @@
-# remote javascript files hosted by other servers
+
 base_paths:
     cf: '//cdnjs.cloudflare.com/ajax/libs/'
 
 js:
-    remote:
+    remote:  # remote javascript files hosted by other servers
         jquery: [cf, 'jquery/3.2.1/jquery.min']
         jquery.debug: [cf, 'jquery/3.1.1/jquery']
         DT: '//cdn.datatables.net/v/bs4/dt-1.10.16/b-1.5.1/b-colvis-1.5.1/cr-1.4.1/fh-3.1.3/r-2.2.1/rr-1.2.3/datatables.min'
@@ -11,7 +11,7 @@ js:
         jqueryUI.debug: [cf, 'jqueryui/1.12.1/jquery-ui']
         tether: [cf, 'tether/1.4.0/js/tether.min']
         tt: '//unpkg.com/tooltip.js'
-        popper: '//unpkg.com/popper.js'
+        popper: '//unpkg.com/popper'
         bs: [cf, 'twitter-bootstrap/4.0.0/js/bootstrap.min']
         bs.debug: [cf, 'twitter-bootstrap/4.0.0-alpha.6/js/bootstrap']
         bs.date: [cf, 'bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min']
@@ -25,13 +25,10 @@ js:
         cookie_api: [cf, 'js-cookie/2.1.4/js.cookie.min']
         fa: '//use.fontawesome.com/releases/v5.0.6/js/all'
 
-# local already existing javascript files
-    local:
-        DT.config: 'js/Datatables_config.js'
+    local:  # local already existing javascript files
 
-# remote css files
 css:
-    remote:
+    remote:  # remote css files
         jqueryUI: [cf, 'jqueryui/1.12.1/jquery-ui.min']
         DT: '//cdn.datatables.net/v/bs4/dt-1.10.16/b-1.5.1/b-colvis-1.5.1/cr-1.4.1/fh-3.1.3/r-2.2.1/rr-1.2.3/datatables.min'
         bs: [cf, 'twitter-bootstrap/4.0.0/css/bootstrap.min']
