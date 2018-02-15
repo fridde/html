@@ -2,9 +2,6 @@
 
 namespace Fridde;
 
-use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles as CssTIS;
-use Hampe\Inky\Inky;
-
 /**
  * Class HTML
  * @package Fridde
@@ -111,7 +108,7 @@ class HTML
 
         $local_file_names = $array['local'] ?? [];
         array_walk($local_file_names, function(&$v) use ($file_type){
-            $v = $file_type . '/' . $v . '.' . $file_type;
+            $v = $file_type . '/' . $v;
         });
         return $this->addJsOrCss($file_type, $local_file_names, self::INC_ADDRESS);
     }
@@ -159,6 +156,8 @@ class HTML
                 $this->IncludableReader = $this->IncludableReader ?? new IncludableReader();
                 $path = $this->IncludableReader->getPathFor($path, $cssOrJs);
                 $type = self::INC_ADDRESS;
+            } else {
+                $path .= '.' . $cssOrJs;
             }
 
             $this->VAR[$type_translator[$type][$cssOrJs]][] = $path;
@@ -166,16 +165,6 @@ class HTML
 
         return $this;
     }
-
-    /**
-     * @param $file_name
-     */
-    public function addCssFile(string $file_name)
-    {
-        $path = BASE_DIR."css\\".$file_name . '.css';
-        $this->addCss([$path, self::INC_ADDRESS]);
-    }
-
 
     public function addGoogleFonts(array $fonts)
     {
@@ -193,25 +182,6 @@ class HTML
         }
         $complete_path = $base_path.implode('|', $font_path_array);
         return $this->addCss([[$complete_path, self::INC_ADDRESS]]);
-    }
-
-
-    /**
-     * @return $this
-     */
-    public function addInlineCss()
-    {
-        $css = "";
-        foreach ($this->VAR["CssFiles"] as $path) {
-            $css .= file_get_contents($path);
-        }
-        $cssTIS = new CssTIS();
-        if (empty($this->DOC)) {
-            $this->finalCompilation();
-        }
-        $this->DOC = $cssTIS->convert($this->DOC, $css);
-
-        return $this;
     }
 
 
