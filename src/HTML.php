@@ -121,10 +121,10 @@ class HTML
      * @param int $type
      * @return HTML
      */
-    public function addJS($js_array)
+    public function addJS($js_array, $default_type = self::INC_ABBREVIATION)
     {
 
-        return $this->addJsOrCss("js", $js_array, $type);
+        return $this->addJsOrCss("js", $js_array, $default_type);
     }
 
     /**
@@ -132,9 +132,9 @@ class HTML
      * @param string $type
      * @return HTML
      */
-    public function addCss($css_array)
+    public function addCss($css_array, $default_type = self::INC_ABBREVIATION)
     {
-        return $this->addJsOrCss("css", $css_array, $type);
+        return $this->addJsOrCss("css", $css_array, $default_type);
     }
 
     /**
@@ -143,7 +143,7 @@ class HTML
      * @param int $type
      * @return $this
      */
-    private function addJsOrCss(string $cssOrJs, array $array)
+    private function addJsOrCss(string $cssOrJs, array $array, $default_type = self::INC_ABBREVIATION)
     {
 
         $type_translator = [
@@ -153,14 +153,15 @@ class HTML
 
         foreach ($array as $element) {
             $element = (array) $element;
-            $type = $element[1] ?? self::INC_ABBREVIATION;
+            $path = $element[0];
+            $type = $element[1] ?? $default_type;
             if ($type === self::INC_ABBREVIATION) {
                 $this->IncludableReader = $this->IncludableReader ?? new IncludableReader();
-                $element = $this->IncludableReader->getPathFor($element, $cssOrJs);
+                $path = $this->IncludableReader->getPathFor($path, $cssOrJs);
                 $type = self::INC_ADDRESS;
             }
 
-            $this->VAR[$type_translator[$type][$cssOrJs]][] = $element;
+            $this->VAR[$type_translator[$type][$cssOrJs]][] = $path;
         }
 
         return $this;
@@ -172,7 +173,7 @@ class HTML
     public function addCssFile(string $file_name)
     {
         $path = BASE_DIR."css\\".$file_name . '.css';
-        $this->addCss($path, self::INC_ADDRESS);
+        $this->addCss([$path, self::INC_ADDRESS]);
     }
 
 
@@ -191,7 +192,7 @@ class HTML
             $font_path_array[] = $font_string;
         }
         $complete_path = $base_path.implode('|', $font_path_array);
-        return $this->addCss($complete_path, self::INC_ADDRESS);
+        return $this->addCss([[$complete_path, self::INC_ADDRESS]]);
     }
 
 
