@@ -12,8 +12,8 @@ js:
         tether: [cf, 'tether/1.4.3/js/tether.min']
         tether.debug: [cf, 'tether/1.4.3/js/tether']
         tt: '//unpkg.com/tooltip.js'
-        popper: [cf, 'popper.js/1.13.0/esm/popper.min.js']
-        popper.debug: [cf, 'popper.js/1.13.0/esm/popper.js']
+        popper: [cf, 'popper.js/1.13.0/esm/popper.min']
+        popper.debug: [cf, 'popper.js/1.13.0/esm/popper']
         bs: [cf, 'twitter-bootstrap/4.0.0/js/bootstrap.min']
         bs.debug: [cf, 'twitter-bootstrap/4.0.0/js/bootstrap']
         bs.date: [cf, 'bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min']
