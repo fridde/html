@@ -234,8 +234,7 @@ class HTML
      */
     public function setBase($base = null)
     {
-        $base = $base ?? APP_URL;
-        $this->VAR["base"] = "//".$base;
+        $this->VAR["base"] = $base ?? APP_URL;;
 
         return $this;
     }
