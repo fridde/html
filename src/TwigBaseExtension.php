@@ -30,7 +30,7 @@ class TwigBaseExtension extends \Twig_Extension
         return $this->get('tests');
     }
 
-    private function get($type)
+    private function get(string $type)
     {
         $return = [];
         foreach($this->$type as $name => $callback){
