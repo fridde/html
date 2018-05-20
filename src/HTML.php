@@ -28,20 +28,20 @@ class HTML
 
     /**
      * HTML constructor.
-     * @param string|null $template_dir
+     * @param array|null $template_dir
      * @throws \Exception
      */
-    public function __construct(string $template_dir = null, array $extensions = [])
+    public function __construct(array $template_dir = null, array $extensions = [])
     {
         if (empty($template_dir)) {
             if (!defined('BASE_DIR')) {
-                throw new \Exception("No template directory given.");
+                throw new \Exception('No template directory given.');
             }
-            $template_dir[] = BASE_DIR."/templates";
-            $template_dir[] = BASE_DIR."/templates/mail";
+            $template_dir[] = BASE_DIR.'/templates';
+            $template_dir[] = BASE_DIR.'/templates/mail';
         }
         $loader = new \Twig_Loader_Filesystem($template_dir);
-        $this->TWIG = new \Twig_Environment($loader, ["debug" => true]);
+        $this->TWIG = new \Twig_Environment($loader, ['debug' => true]);
         $extensions[] = new \Twig_Extension_Debug();
         foreach ($extensions as $extension) {
             $this->TWIG->addExtension($extension);
@@ -65,18 +65,18 @@ class HTML
      * @param string $abbreviation
      * @return HTML
      */
-    public function addDefaultJs($abbreviation = "index")
+    public function addDefaultJs($abbreviation = 'index')
     {
-        return $this->addDefaultJsOrCss("js", $abbreviation);
+        return $this->addDefaultJsOrCss('js', $abbreviation);
     }
 
     /**
      * @param string $abbreviation
      * @return HTML
      */
-    public function addDefaultCss($abbreviation = "index")
+    public function addDefaultCss($abbreviation = 'index')
     {
-        return $this->addDefaultJsOrCss("css", $abbreviation);
+        return $this->addDefaultJsOrCss('css', $abbreviation);
     }
 
     public function addDefaultFonts()
@@ -121,7 +121,7 @@ class HTML
     public function addJS($js_array, $default_type = self::INC_ABBREVIATION)
     {
 
-        return $this->addJsOrCss("js", $js_array, $default_type);
+        return $this->addJsOrCss('js', $js_array, $default_type);
     }
 
     /**
@@ -131,11 +131,11 @@ class HTML
      */
     public function addCss($css_array, $default_type = self::INC_ABBREVIATION)
     {
-        return $this->addJsOrCss("css", $css_array, $default_type);
+        return $this->addJsOrCss('css', $css_array, $default_type);
     }
 
     /**
-     * @param string $cssOrJs Either "css" or "js"
+     * @param string $cssOrJs Either 'css' or 'js'
      * @param array $array
      * @param int $type
      * @return $this
@@ -190,7 +190,7 @@ class HTML
      */
     private function finalCompilation()
     {
-        $this->addVariable("TITLE", $this->Title);
+        $this->addVariable('TITLE', $this->Title);
         $this->DOC = $this->TWIG->render($this->Template, $this->VAR);
 
         return $this;
@@ -234,7 +234,7 @@ class HTML
      */
     public function setBase($base = null)
     {
-        $this->VAR["base"] = $base ?? APP_URL;;
+        $this->VAR['base'] = $base ?? APP_URL;
 
         return $this;
     }
