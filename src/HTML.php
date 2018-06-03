@@ -222,7 +222,7 @@ class HTML
      */
     public function setTemplate($template)
     {
-        $template = substr($template, -5) == '.twig' ?: $template.'.twig';
+        $template = substr($template, -5) === '.twig' ?: $template.'.twig';
         $this->Template = $template;
 
         return $this;
@@ -234,7 +234,9 @@ class HTML
      */
     public function setBase($base = null)
     {
-        $this->VAR['base'] = $base ?? APP_URL;
+        $base = $base ?? (defined('APP_URL') ? APP_URL : '');
+
+        $this->VAR['base'] = $base;
 
         return $this;
     }
