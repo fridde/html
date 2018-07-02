@@ -18,7 +18,7 @@ class HTML
     private $Template;
     /* @var string $Title The title of the html-doc to be shown in the browser */
     public $Title;
-    /* @var IncludableReader $IncludableReader  */
+    /* @var IncludableReader $IncludableReader */
     private $IncludableReader;
 
     public const INC_ABBREVIATION = 0;
@@ -33,16 +33,18 @@ class HTML
      */
     public function __construct(array $template_dir = null, array $extensions = [])
     {
-        if (empty($template_dir)) {
-            if (!defined('BASE_DIR')) {
-                throw new \Exception('No template directory given.');
-            }
-            $template_dir[] = BASE_DIR.'/templates';
-            $template_dir[] = BASE_DIR.'/templates/mail';
+        if (empty($template_dir) && !defined('BASE_DIR')) {
+           throw new \Exception('Template directory could not be determined.');
         }
+        if(empty($template_dir)){
+            $template_dir[] = BASE_DIR.'/templates';
+        }
+
         $loader = new \Twig_Loader_Filesystem($template_dir);
-        $this->TWIG = new \Twig_Environment($loader, ['debug' => true]);
-        $extensions[] = new \Twig_Extension_Debug();
+        $this->TWIG = new \Twig_Environment($loader, ['debug' => self::isDebug()]);
+        if (self::isDebug()) {
+            $extensions[] = new \Twig_Extension_Debug();
+        }
         foreach ($extensions as $extension) {
             $this->TWIG->addExtension($extension);
         }
@@ -88,6 +90,7 @@ class HTML
                 array_unshift($v, $k);
             }
         );
+
         return $this->addGoogleFonts($array);
     }
 
@@ -107,9 +110,13 @@ class HTML
         $this->addJsOrCss($file_type, $remote_abbreviations, self::INC_ABBREVIATION);
 
         $local_file_names = $array['local'] ?? [];
-        array_walk($local_file_names, function(&$v) use ($file_type){
-            $v = $file_type . '/' . $v;
-        });
+        array_walk(
+            $local_file_names,
+            function (&$v) use ($file_type) {
+                $v = $file_type.'/'.$v;
+            }
+        );
+
         return $this->addJsOrCss($file_type, $local_file_names, self::INC_ADDRESS);
     }
 
@@ -145,11 +152,11 @@ class HTML
 
         $type_translator = [
             self::INC_ADDRESS => ['css' => 'CssFiles', 'js' => 'JsFiles'],
-            self::INC_LITERAL => ['css' => 'LiteralCss', 'js' => 'LiteralJs']
+            self::INC_LITERAL => ['css' => 'LiteralCss', 'js' => 'LiteralJs'],
         ];
 
         foreach ($array as $element) {
-            $element = (array) $element;
+            $element = (array)$element;
             $path = $element[0];
             $type = $element[1] ?? $default_type;
             if ($type === self::INC_ABBREVIATION) {
@@ -157,7 +164,7 @@ class HTML
                 $path = $this->IncludableReader->getPathFor($path, $cssOrJs);
                 $type = self::INC_ADDRESS;
             } else {
-                $path .= '.' . $cssOrJs;
+                $path .= '.'.$cssOrJs;
             }
 
             $this->VAR[$type_translator[$type][$cssOrJs]][] = $path;
@@ -181,6 +188,7 @@ class HTML
             $font_path_array[] = $font_string;
         }
         $complete_path = $base_path.implode('|', $font_path_array);
+
         return $this->addCss([[$complete_path, self::INC_ADDRESS]]);
     }
 
@@ -307,4 +315,8 @@ class HTML
         return $partition;
     }
 
+    protected static function isDebug(): bool
+    {
+        return (defined('DEBUG') && !empty(DEBUG)) || !empty($GLOBALS['debug']);
+    }
 }
