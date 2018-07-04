@@ -39,7 +39,7 @@ css:
         bs: [cf, 'twitter-bootstrap/4.0.0/css/bootstrap.min']
         bs.debug: [cf, 'twitter-bootstrap/4.0.0/css/bootstrap']
         bs.flatly: '//bootswatch.com/flatly/bootstrap.min'
-        fAwe: [cf, 'font-awesome/4.7.0/css/font-awesome.min']
+        fa: '//use.fontawesome.com/releases/v5.1.0/css/all'
         bs.date: [cf, 'bootstrap-datepicker/1.7.1/css/bootstrap-datepicker3.min']
         bs.time: [cf, 'bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.min']
         bs.select: [cf, 'bootstrap-select/1.12.2/css/bootstrap-select.min']
