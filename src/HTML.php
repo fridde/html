@@ -67,7 +67,7 @@ class HTML
      * @param string $abbreviation
      * @return HTML
      */
-    public function addDefaultJs($abbreviation = 'index')
+    public function addDefaultJs(string $abbreviation = 'index')
     {
         return $this->addDefaultJsOrCss('js', $abbreviation);
     }
@@ -76,7 +76,7 @@ class HTML
      * @param string $abbreviation
      * @return HTML
      */
-    public function addDefaultCss($abbreviation = 'index')
+    public function addDefaultCss(string $abbreviation = 'index')
     {
         return $this->addDefaultJsOrCss('css', $abbreviation);
     }
@@ -100,7 +100,7 @@ class HTML
      * @return HTML
      * @throws \Exception
      */
-    private function addDefaultJsOrCss($file_type, $key)
+    private function addDefaultJsOrCss(string $file_type, string $key)
     {
         $array = SETTINGS['defaults'][$file_type][$key] ?? false;
         if ($array === false) {
