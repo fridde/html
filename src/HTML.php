@@ -31,7 +31,7 @@ class HTML
      * @param array|null $template_dir
      * @throws \Exception
      */
-    public function __construct(array $template_dir = null, array $extensions = [])
+    public function __construct(array $template_dir = null, array $extensions = [], string $cache_path = null)
     {
         if (empty($template_dir) && !defined('BASE_DIR')) {
            throw new \Exception('Template directory could not be determined.');
@@ -41,7 +41,12 @@ class HTML
         }
 
         $loader = new \Twig_Loader_Filesystem($template_dir);
-        $this->TWIG = new \Twig_Environment($loader, ['debug' => self::isDebug()]);
+
+        $env_options = ['debug' => self::isDebug()];
+        if(!empty($cache_path)){
+            $env_options['cache'] = $cache_path;
+        }
+        $this->TWIG = new \Twig_Environment($loader, $env_options);
         if (self::isDebug()) {
             $extensions[] = new \Twig_Extension_Debug();
         }
