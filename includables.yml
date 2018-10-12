@@ -25,7 +25,7 @@ js:
         moment.debug: [cf, 'moment.js/2.20.1/moment']
         moment_sv: [cf, 'moment.js/2.17.1/locale/sv']
         fullcal: [cf, 'fullcalendar/3.9.0/fullcalendar.min']
-        fullcal.sv: [cf, 'fullcalendar/3.9.0/locale/sv.js']
+        fullcal.sv: [cf, 'fullcalendar/3.9.0/locale/sv']
         confirm: [cf, 'jquery-confirm/3.1.0/jquery-confirm.min']
         toastr: [cf, 'toastr.js/latest/toastr.min']
         cookie_api: [cf, 'js-cookie/2.2.0/js.cookie.min']
