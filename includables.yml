@@ -32,7 +32,7 @@ js:
         toastr: [cf, 'toastr.js/latest/toastr.min']
         cookie_api: [cf, 'js-cookie/2.2.0/js.cookie.min']
         cookie_api.debug: [cf, 'js-cookie/2.2.0/js.cookie']
-        fa: '//use.fontawesome.com/releases/v5.1.0/js/all'
+        fa: '//use.fontawesome.com/releases/v5.5.0/js/all'
         captcha: '//google.com/recaptcha/api'
 
     local:  # local already existing javascript files
@@ -47,7 +47,7 @@ css:
         bs.admin: [cf, 'startbootstrap-sb-admin-2/3.3.7+1/css/sb-admin-2.min']
         bs.admin.debug: [cf, 'startbootstrap-sb-admin-2/3.3.7+1/css/sb-admin-2']
         bs.flatly: '//bootswatch.com/flatly/bootstrap.min'
-        fa: '//use.fontawesome.com/releases/v5.1.0/css/all'
+        fa: '//use.fontawesome.com/releases/v5.5.0/css/all'
         bs.date: [cf, 'bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min']
         bs.date.debug: [cf, 'bootstrap-datepicker/1.8.0/css/bootstrap-datepicker']
         bs.time: [cf, 'bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.min']
