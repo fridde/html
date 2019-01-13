@@ -21,16 +21,13 @@ class HTML
     /* @var IncludableReader $IncludableReader */
     private $IncludableReader;
 
+    public const BASE_ASSET_PATH = 'assets/compiled/';
+
     public const INC_ABBREVIATION = 0;
     public const INC_ADDRESS = 1;
     public const INC_LITERAL = 2;
 
 
-    /**
-     * HTML constructor.
-     * @param array|null $template_dir
-     * @throws \Exception
-     */
     public function __construct(array $template_dir = null, array $extensions = [], string $cache_path = null)
     {
         if (empty($template_dir) && !defined('BASE_DIR')) {
@@ -60,7 +57,7 @@ class HTML
      * @param mixed|null $variable
      * @return $this
      */
-    public function addVariable(string $key, $variable = null)
+    public function addVariable(string $key, $variable = null): self
     {
         $this->VAR[$key] = $variable;
 
@@ -72,21 +69,21 @@ class HTML
      * @param string $abbreviation
      * @return HTML
      */
-    public function addDefaultJs(string $abbreviation = 'index')
+    public function addDefaultJs(): HTML
     {
-        return $this->addDefaultJsOrCss('js', $abbreviation);
+        return $this->addDefaultJsOrCss('js');
     }
 
     /**
      * @param string $abbreviation
      * @return HTML
      */
-    public function addDefaultCss(string $abbreviation = 'index')
+    public function addDefaultCss(): HTML
     {
-        return $this->addDefaultJsOrCss('css', $abbreviation);
+        return $this->addDefaultJsOrCss('css');
     }
 
-    public function addDefaultFonts()
+    public function addDefaultFonts(): HTML
     {
         $array = SETTINGS['defaults']['fonts'];
         array_walk(
@@ -99,26 +96,19 @@ class HTML
         return $this->addGoogleFonts($array);
     }
 
-    /**
-     * @param $type
-     * @param $key
-     * @return HTML
-     * @throws \Exception
-     */
-    private function addDefaultJsOrCss(string $file_type, string $key)
+    private function addDefaultJsOrCss(string $file_type): HTML
     {
-        $array = SETTINGS['defaults'][$file_type][$key] ?? false;
-        if ($array === false) {
-            throw new \Exception('The abbreviation <'.$key.'> could not be resolved');
-        }
+        $array = SETTINGS['defaults'][$file_type] ?? false;
+
         $remote_abbreviations = $array['remote'] ?? [];
-        $this->addJsOrCss($file_type, $remote_abbreviations, self::INC_ABBREVIATION);
+
+        $this->addJsOrCss($file_type, $remote_abbreviations);
 
         $local_file_names = $array['local'] ?? [];
         array_walk(
             $local_file_names,
-            function (&$v) use ($file_type) {
-                $v = $file_type.'/'.$v;
+            function (&$v){
+                $v = self::BASE_ASSET_PATH . $v;
             }
         );
 
@@ -130,7 +120,7 @@ class HTML
      * @param int $type
      * @return HTML
      */
-    public function addJS($js_array, $default_type = self::INC_ABBREVIATION)
+    public function addJS($js_array, int $default_type = self::INC_ABBREVIATION): HTML
     {
 
         return $this->addJsOrCss('js', $js_array, $default_type);
@@ -141,18 +131,12 @@ class HTML
      * @param string $type
      * @return HTML
      */
-    public function addCss($css_array, $default_type = self::INC_ABBREVIATION)
+    public function addCss($css_array, $default_type = self::INC_ABBREVIATION): HTML
     {
         return $this->addJsOrCss('css', $css_array, $default_type);
     }
 
-    /**
-     * @param string $cssOrJs Either 'css' or 'js'
-     * @param array $array
-     * @param int $type
-     * @return $this
-     */
-    private function addJsOrCss(string $cssOrJs, array $array, $default_type = self::INC_ABBREVIATION)
+    private function addJsOrCss(string $cssOrJs, array $array, $default_type = self::INC_ABBREVIATION): self
     {
 
         $type_translator = [
@@ -168,7 +152,7 @@ class HTML
                 $this->IncludableReader = $this->IncludableReader ?? new IncludableReader();
                 $path = $this->IncludableReader->getPathFor($path, $cssOrJs);
                 $type = self::INC_ADDRESS;
-            } else {
+            } elseif($type === self::INC_ADDRESS) {
                 $path .= '.'.$cssOrJs;
             }
 
@@ -178,7 +162,7 @@ class HTML
         return $this;
     }
 
-    public function addGoogleFonts(array $fonts)
+    public function addGoogleFonts(array $fonts): HTML
     {
         $base_path = 'https://fonts.googleapis.com/css?family=';
 
@@ -186,7 +170,6 @@ class HTML
         $font_path_array = [];
         foreach ($fonts as $font_and_styles) {
             $font_string = str_replace([' ', '_'], '+', array_shift($font_and_styles));
-            $styles = $font_and_styles;
             if (!empty($font_and_styles)) {
                 $font_string .= ':'.implode(',', $font_and_styles);
             }
@@ -201,7 +184,7 @@ class HTML
     /**
      * @return $this
      */
-    private function finalCompilation()
+    private function finalCompilation(): self
     {
         $this->addVariable('TITLE', $this->Title);
         $this->DOC = $this->TWIG->render($this->Template, $this->VAR);
@@ -213,7 +196,7 @@ class HTML
      * @param bool $echo If set to true, echos the document, too
      * @return string The final html document after all compilations
      */
-    public function render(bool $echo = true, $encode_entities = false)
+    public function render(bool $echo = true, $encode_entities = false): string
     {
         if (empty($this->DOC)) {
             $this->finalCompilation();
@@ -233,7 +216,7 @@ class HTML
      * @param $template
      * @return $this
      */
-    public function setTemplate($template)
+    public function setTemplate(string $template): self
     {
         $template = substr($template, -5) === '.twig' ?: $template.'.twig';
         $this->Template = $template;
@@ -245,7 +228,7 @@ class HTML
      * @param null $base
      * @return $this
      */
-    public function setBase($base = null)
+    public function setBase(string $base = null): self
     {
         $base = $base ?? (defined('APP_URL') ? APP_URL : '');
 
@@ -259,17 +242,14 @@ class HTML
      * @param null $title
      * @return $this
      */
-    public function setTitle($title = null)
+    public function setTitle(string $title = null): self
     {
         $this->Title = $title ?? '';
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->Title;
     }
@@ -277,7 +257,7 @@ class HTML
     /**
      * @return mixed
      */
-    public function getCssFiles()
+    public function getCssFiles(): ?array
     {
         return $this->CssFiles;
     }
@@ -285,7 +265,7 @@ class HTML
     /**
      * @return mixed
      */
-    public function getLiteralCss()
+    public function getLiteralCss(): ?array
     {
         return $this->LiteralCss;
     }
@@ -293,7 +273,7 @@ class HTML
     /**
      * @return mixed
      */
-    public function getVAR()
+    public function getVAR(): ?array
     {
         return $this->VAR;
     }
@@ -304,7 +284,7 @@ class HTML
      * @param bool $horizontal
      * @return array
      */
-    public static function partition(array $array, int $columns = 2, bool $horizontal = true)
+    public static function partition(array $array, int $columns = 2, bool $horizontal = true): array
     {
         if ($horizontal) {
             $partition = [];
