@@ -4,8 +4,8 @@ base_paths:
 
 js:
     remote:  # remote javascript files hosted by other servers
-        jquery: [cf, 'jquery/3.2.1/jquery.min']
-        jquery.debug: [cf, 'jquery/3.2.1/jquery']
+        jquery: [cf, 'jquery/3.3.1/jquery.min']
+        jquery.debug: [cf, 'jquery/3.3.1/jquery']
         DT: '//cdn.datatables.net/v/bs4/dt-1.10.16/b-1.5.1/b-colvis-1.5.1/cr-1.4.1/fh-3.1.3/r-2.2.1/rr-1.2.3/datatables.min'
         jqueryUI: [cf, 'jqueryui/1.12.1/jquery-ui.min']
         jqueryUI.debug: [cf, 'jqueryui/1.12.1/jquery-ui']
