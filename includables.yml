@@ -22,7 +22,7 @@ js:
     confirm: [cf, 'jquery-confirm/3.1.0/jquery-confirm.min']
     toastr: [cf, 'toastr.js/latest/toastr.min']
     cookie_api: [cf, 'js-cookie/2.2.0/js.cookie.min']
-    fa: '//use.fontawesome.com/releases/v5.5.0/js/all'
+    fa: '//use.fontawesome.com/releases/v5.6.3/js/all'
     captcha: '//google.com/recaptcha/api'
 
 css:
