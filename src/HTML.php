@@ -66,7 +66,6 @@ class HTML
 
 
     /**
-     * @param string $abbreviation
      * @return HTML
      */
     public function addDefaultJs(): HTML
@@ -75,7 +74,6 @@ class HTML
     }
 
     /**
-     * @param string $abbreviation
      * @return HTML
      */
     public function addDefaultCss(): HTML
@@ -116,8 +114,8 @@ class HTML
     }
 
     /**
-     * @param string|array $js
-     * @param int $type
+     * @param $js_array
+     * @param int $default_type
      * @return HTML
      */
     public function addJS($js_array, int $default_type = self::INC_ABBREVIATION): HTML
@@ -127,8 +125,8 @@ class HTML
     }
 
     /**
-     * @param string|array $css
-     * @param string $type
+     * @param $css_array
+     * @param int $default_type
      * @return HTML
      */
     public function addCss($css_array, $default_type = self::INC_ABBREVIATION): HTML
@@ -194,6 +192,7 @@ class HTML
 
     /**
      * @param bool $echo If set to true, echos the document, too
+     * @param bool $encode_entities
      * @return string The final html document after all compilations
      */
     public function render(bool $echo = true, $encode_entities = false): string
@@ -218,14 +217,14 @@ class HTML
      */
     public function setTemplate(string $template): self
     {
-        $template = substr($template, -5) === '.twig' ?: $template.'.twig';
+        $template .= substr($template, -5) !== '.twig' ? '.twig' : '';
         $this->Template = $template;
 
         return $this;
     }
 
     /**
-     * @param null $base
+     * @param string $base
      * @return $this
      */
     public function setBase(string $base = null): self
@@ -239,7 +238,7 @@ class HTML
 
 
     /**
-     * @param null $title
+     * @param string $title
      * @return $this
      */
     public function setTitle(string $title = null): self
@@ -254,21 +253,6 @@ class HTML
         return $this->Title;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getCssFiles(): ?array
-    {
-        return $this->CssFiles;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLiteralCss(): ?array
-    {
-        return $this->LiteralCss;
-    }
 
     /**
      * @return mixed
