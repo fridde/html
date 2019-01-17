@@ -151,7 +151,7 @@ class HTML
                 $path = $this->IncludableReader->getPathFor($path, $cssOrJs);
                 $type = self::INC_ADDRESS;
             } elseif($type === self::INC_ADDRESS) {
-                $path .= '.'.$cssOrJs;
+                $path = self::BASE_ASSET_PATH . $path . '.'.$cssOrJs;
             }
 
             $this->VAR[$type_translator[$type][$cssOrJs]][] = $path;
