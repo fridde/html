@@ -94,11 +94,12 @@ class HTML
     {
 
         foreach ($array as $element) {
-            $element = (array)$element;
-            $resource = $element[0];
-            $type = $element[1] ?? $default_type;
+            $a = (array) $element;
+            $resource = array_shift($a);
+            $type = array_shift($a) ?? $default_type;
+
             if ($type !== self::INC_LITERAL) {
-                $path = $this->convertToPath($resource, $default_type, $extension);
+                $path = $this->convertToPath($resource, $type, $extension);
                 $this->VAR[$extension]['sources'][] = $path;
             } else {
                 $this->VAR[$extension]['literal'][] = $resource;
@@ -136,7 +137,7 @@ class HTML
             $paths = [$this->convertToGoogleFontPath($fonts)];
         }
 
-        return $this->addCss([$paths, self::INC_URL]);
+        return $this->addCss($paths, self::INC_URL);
     }
 
     public function addFonts(array $fontgroups, int $default_font_type = self::FONT_GOOGLE): self
