@@ -24,23 +24,27 @@ class HTML
     public const BASE_ASSET_PATH = 'assets/compiled/';
 
     public const INC_ABBREVIATION = 0;
-    public const INC_ADDRESS = 1;
+    public const INC_URL = 1;
     public const INC_LITERAL = 2;
+    public const INC_ASSET = 3;
+    public const INC_FILE = 4;
+
+    public const FONT_GOOGLE = 0;
 
 
     public function __construct(array $template_dir = null, array $extensions = [], string $cache_path = null)
     {
         if (empty($template_dir) && !defined('BASE_DIR')) {
-           throw new \Exception('Template directory could not be determined.');
+            throw new \Exception('Template directory could not be determined.');
         }
-        if(empty($template_dir)){
+        if (empty($template_dir)) {
             $template_dir[] = BASE_DIR.'/templates';
         }
 
         $loader = new \Twig_Loader_Filesystem($template_dir);
 
         $env_options = ['debug' => self::isDebug()];
-        if(!empty($cache_path)){
+        if (!empty($cache_path)) {
             $env_options['cache'] = $cache_path;
         }
         $this->TWIG = new \Twig_Environment($loader, $env_options);
@@ -66,54 +70,6 @@ class HTML
 
 
     /**
-     * @return HTML
-     */
-    public function addDefaultJs(): HTML
-    {
-        return $this->addDefaultJsOrCss('js');
-    }
-
-    /**
-     * @return HTML
-     */
-    public function addDefaultCss(): HTML
-    {
-        return $this->addDefaultJsOrCss('css');
-    }
-
-    public function addDefaultFonts(): HTML
-    {
-        $array = SETTINGS['defaults']['fonts'];
-        array_walk(
-            $array,
-            function (&$v, $k) {
-                array_unshift($v, $k);
-            }
-        );
-
-        return $this->addGoogleFonts($array);
-    }
-
-    private function addDefaultJsOrCss(string $file_type): HTML
-    {
-        $array = SETTINGS['defaults'][$file_type] ?? false;
-
-        $remote_abbreviations = $array['remote'] ?? [];
-
-        $this->addJsOrCss($file_type, $remote_abbreviations);
-
-        $local_file_names = $array['local'] ?? [];
-        array_walk(
-            $local_file_names,
-            function (&$v){
-                $v = self::BASE_ASSET_PATH . $v;
-            }
-        );
-
-        return $this->addJsOrCss($file_type, $local_file_names, self::INC_ADDRESS);
-    }
-
-    /**
      * @param $js_array
      * @param int $default_type
      * @return HTML
@@ -134,33 +90,68 @@ class HTML
         return $this->addJsOrCss('css', $css_array, $default_type);
     }
 
-    private function addJsOrCss(string $cssOrJs, array $array, $default_type = self::INC_ABBREVIATION): self
+    private function addJsOrCss(string $extension, array $array, int $default_type = self::INC_ABBREVIATION): self
     {
-
-        $type_translator = [
-            self::INC_ADDRESS => ['css' => 'CssFiles', 'js' => 'JsFiles'],
-            self::INC_LITERAL => ['css' => 'LiteralCss', 'js' => 'LiteralJs'],
-        ];
 
         foreach ($array as $element) {
             $element = (array)$element;
-            $path = $element[0];
+            $resource = $element[0];
             $type = $element[1] ?? $default_type;
-            if ($type === self::INC_ABBREVIATION) {
-                $this->IncludableReader = $this->IncludableReader ?? new IncludableReader();
-                $path = $this->IncludableReader->getPathFor($path, $cssOrJs);
-                $type = self::INC_ADDRESS;
-            } elseif($type === self::INC_ADDRESS) {
-                $path = self::BASE_ASSET_PATH . $path . '.'.$cssOrJs;
+            if ($type !== self::INC_LITERAL) {
+                $path = $this->convertToPath($resource, $default_type, $extension);
+                $this->VAR[$extension]['sources'][] = $path;
+            } else {
+                $this->VAR[$extension]['literal'][] = $resource;
             }
-
-            $this->VAR[$type_translator[$type][$cssOrJs]][] = $path;
         }
 
         return $this;
     }
 
-    public function addGoogleFonts(array $fonts): HTML
+    public function convertToPath(string $resource, int $inc_type, string $file_ext = null): ?string
+    {
+        $ext = $file_ext ? '.'.$file_ext : '';
+
+        if ($inc_type === self::INC_ABBREVIATION) {
+            return $this->getIncludableReader()->getPathFor($resource, $file_ext);
+        }
+        if ($inc_type === self::INC_URL) {
+            return $resource;
+        }
+        if ($inc_type === self::INC_ASSET) {
+            return self::BASE_ASSET_PATH.$resource.$ext;
+        }
+        if ($inc_type === self::INC_FILE) {
+            return $resource.$ext;
+        }
+
+        return null;
+    }
+
+    public function addFontGroup(array $fonts, int $font_type = self::FONT_GOOGLE): self
+    {
+        $paths = [];
+
+        if($font_type === self::FONT_GOOGLE){
+            $paths = [$this->convertToGoogleFontPath($fonts)];
+        }
+
+        return $this->addCss([$paths, self::INC_URL]);
+    }
+
+    public function addFonts(array $fontgroups, int $default_font_type = self::FONT_GOOGLE): self
+    {
+        foreach($fontgroups as $group){
+            $fonts = $group[0];
+            $font_type = $group[1] ?? $default_font_type;
+
+            $this->addFontGroup($fonts, $font_type);
+        }
+
+        return $this;
+    }
+
+    public function convertToGoogleFontPath(array $fonts): string
     {
         $base_path = 'https://fonts.googleapis.com/css?family=';
 
@@ -173,9 +164,12 @@ class HTML
             }
             $font_path_array[] = $font_string;
         }
-        $complete_path = $base_path.implode('|', $font_path_array);
+        return $base_path . implode('|', $font_path_array);
+    }
 
-        return $this->addCss([[$complete_path, self::INC_ADDRESS]]);
+    public function addGoogleFonts(array $fonts): self
+    {
+        return $this->addFonts($fonts, self::FONT_GOOGLE);
     }
 
 
@@ -260,6 +254,11 @@ class HTML
     public function getVAR(): ?array
     {
         return $this->VAR;
+    }
+
+    public function getIncludableReader(): IncludableReader
+    {
+        return ($this->IncludableReader ?? new IncludableReader());
     }
 
     /**
