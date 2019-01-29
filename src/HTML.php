@@ -21,6 +21,8 @@ class HTML
     /* @var IncludableReader $IncludableReader */
     private $IncludableReader;
 
+    private $reset_doc = false;
+
     public const BASE_ASSET_PATH = 'assets/compiled/';
 
     public const INC_ABBREVIATION = 0;
@@ -181,6 +183,7 @@ class HTML
     {
         $this->addVariable('TITLE', $this->Title);
         $this->DOC = $this->TWIG->render($this->Template, $this->VAR);
+        $this->reset_doc = false;
 
         return $this;
     }
@@ -192,7 +195,7 @@ class HTML
      */
     public function render(bool $echo = true, $encode_entities = false): string
     {
-        if (empty($this->DOC)) {
+        if (empty($this->DOC) || $this->reset_doc) {
             $this->finalCompilation();
         }
         if ($encode_entities) {
@@ -260,6 +263,11 @@ class HTML
     public function getIncludableReader(): IncludableReader
     {
         return ($this->IncludableReader ?? new IncludableReader());
+    }
+
+    public function resetDocument(): void
+    {
+        $this->reset_doc = true;
     }
 
     /**
