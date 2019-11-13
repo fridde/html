@@ -183,6 +183,7 @@ class HTML
     {
         $this->addVariable('TITLE', $this->Title);
         $this->DOC = $this->TWIG->render($this->Template, $this->VAR);
+        $this->DOC = self::prependBOM($this->DOC);
         $this->reset_doc = false;
 
         return $this;
@@ -295,5 +296,10 @@ class HTML
     protected static function isDebug(): bool
     {
         return (defined('DEBUG') && !empty(DEBUG)) || !empty($GLOBALS['debug']);
+    }
+
+    protected static function prependBOM(string $string)
+    {
+        return chr(239) . chr(187) . chr(191) . $string;
     }
 }
