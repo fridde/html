@@ -2,7 +2,7 @@
 
 namespace Fridde;
 
-class TwigBaseExtension extends \Twig_Extension
+class TwigBaseExtension extends \Twig\Extension\AbstractExtension
 {
     public $functions;
     public $filters;
@@ -15,34 +15,34 @@ class TwigBaseExtension extends \Twig_Extension
         $this->tests = $this->defineTests();
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return $this->get('filters');
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return $this->get('functions');
     }
 
-    public function getTests()
+    public function getTests(): array
     {
         return $this->get('tests');
     }
 
-    private function get(string $type)
+    private function get(string $type): array
     {
         $return = [];
         foreach($this->$type as $name => $callback){
             switch($type){
                 case 'functions':
-                    $r = new \Twig_Function($name, $callback);
+                    $r = new \Twig\TwigFunction($name, $callback);
                     break;
                 case 'tests':
-                    $r = new \Twig_Test($name, $callback);
+                    $r = new \Twig\TwigTest($name, $callback);
                     break;
                 case 'filters':
-                    $r = new \Twig_Filter($name, $callback);
+                    $r = new \Twig\TwigFilter($name, $callback);
                     break;
             }
             $return[] = $r;
@@ -51,22 +51,22 @@ class TwigBaseExtension extends \Twig_Extension
     }
 
 
-    public function defineFunctions()
+    public function defineFunctions(): array
     {
         return [];
     }
 
-    public function defineFilters()
+    public function defineFilters(): array
     {
         return [];
     }
 
-    public function defineTests()
+    public function defineTests(): array
     {
         return [];
     }
 
-    protected function getDefinitionArray(array $names)
+    protected function getDefinitionArray(array $names): array
     {
         $return = [];
         foreach ($names as $name_and_callback) {
