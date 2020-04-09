@@ -43,15 +43,15 @@ class HTML
             $template_dir[] = BASE_DIR.'/templates';
         }
 
-        $loader = new \Twig_Loader_Filesystem($template_dir);
+        $loader = new \Twig\Loader\FilesystemLoader($template_dir);
 
         $env_options = ['debug' => self::isDebug()];
         if (!empty($cache_path)) {
             $env_options['cache'] = $cache_path;
         }
-        $this->TWIG = new \Twig_Environment($loader, $env_options);
+        $this->TWIG = new \Twig\Environment($loader, $env_options);
         if (self::isDebug()) {
-            $extensions[] = new \Twig_Extension_Debug();
+            $extensions[] = new \Twig\Extension\DebugExtension();
         }
         foreach ($extensions as $extension) {
             $this->TWIG->addExtension($extension);
